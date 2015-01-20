@@ -59,6 +59,15 @@ int main(int argc, char* argv[])
 	glewInit();
 
 	game = new Game(widthInBlocks, heightInBlocks, blockSize);
+	if(argc >= 4)
+		game->setLookAheadTetrominosNumbler(atoi(argv[3]));
+	if(argc >= 5)
+		game->setTetrominoDrawStyle(atoi(argv[4]));
+	game->turnOnLogging();
+
+	int numOfIterations = 0;
+	if(argc >= 6)
+		numOfIterations = atoi(argv[5]);
 
 	// Define the viewport dimensions
 	glViewport(0, 0, (GLsizei) (widthInBlocks * blockSize), (GLsizei) (heightInBlocks * blockSize));
@@ -80,6 +89,9 @@ int main(int argc, char* argv[])
 
 		//http://stackoverflow.com/questions/17138579/idle-thread-time-in-glfw-3-0-c
 		std::this_thread::yield();
+
+		if((numOfIterations != 0) && (game->iterations >= numOfIterations))
+			glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
 	glfwTerminate();
