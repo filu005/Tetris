@@ -16,12 +16,13 @@ public:
 	std::pair<Tetromino, double> itsShowtime(Board& b, std::vector<Tetromino> tetrominos, unsigned int currentTetrominoIdx);
 	void flipState() { _isRunning = (_isRunning == State::STOP) ? State::START : State::STOP; }
 	bool isRunning() const { return (_isRunning == State::START); }
+	void setAIModifiers(double heightW, double linesW, double holesW, double bumpinessW);
 
 private:
-	const double heightWeight = -0.66569;
-	const double linesWeight = 0.99275;
-	const double holesWeight = -0.46544;
-	const double bumpinessWeight = -0.24077;
+	double heightWeight = -0.66569;
+	double linesWeight = 0.99275;
+	double holesWeight = -0.46544;
+	double bumpinessWeight = -0.24077;
 
 	State _isRunning;
 };

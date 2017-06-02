@@ -20,7 +20,7 @@ void Game::paint(void)
 	_tetrominos[0].paint(_painter);
 }
 
-void Game::tick(void)
+bool Game::tick(void)
 {
 	Tetromino curTet = _tetrominos[0];
 	if(_ai.isRunning())
@@ -53,10 +53,13 @@ void Game::tick(void)
 		_tetrominos[_lookAheadTetrominos] = randTetrominoFromPool();
 
 		if(_board->collide(_tetrominos[0]))
-			restart();
+			return true;
+			//restart();
 	}
 	else
 		_tetrominos[0] = t;
+
+	return false;
 }
 
 Tetromino Game::randTetrominoFromPool(void)

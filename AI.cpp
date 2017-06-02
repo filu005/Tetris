@@ -1,8 +1,9 @@
 #include "AI.hpp"
+#include <omp.h>
 
-AI::AI(void) : _isRunning(AI::STOP)
+AI::AI(void) : /*heightWeight(-0.66569), linesWeight(0.99275), holesWeight(-0.46544), bumpinessWeight(-0.24077), */_isRunning(AI::START)
 {
-	
+
 }
 
 std::pair<Tetromino, double> AI::itsShowtime(Board& board, std::vector<Tetromino> tetrominos, unsigned int currentTetrominoIdx)
@@ -10,6 +11,7 @@ std::pair<Tetromino, double> AI::itsShowtime(Board& board, std::vector<Tetromino
 	Tetromino bestTetromino(Tetromino::I);
 	double bestScore = -1000000.0;
 
+	#pragma omp parallel for default(shared) schedule(static, 1)
 	for(int rotation = 0; rotation < 4; ++rotation)
 	{
 		Tetromino t = tetrominos[currentTetrominoIdx];
@@ -37,16 +39,26 @@ std::pair<Tetromino, double> AI::itsShowtime(Board& board, std::vector<Tetromino
 			else
 				score = heightWeight * b.aggregateHeight() + linesWeight * b.completeLines() + holesWeight * b.holes() + bumpinessWeight * b.bumpiness();
 
-			if(score > bestScore)
+			#pragma omp critical
 			{
-				bestScore = score;
-				bestTetromino = t2;
+				if(score > bestScore)
+				{
+					bestScore = score;
+					bestTetromino = t2;
+				}
 			}
-
 			t.move(1, 0);
 		}
 	}
 
 	return std::make_pair(bestTetromino, bestScore);
+}
+
+void AI::setAIModifiers(double heightW, double linesW, double holesW, double bumpinessW)
+{
+	heightWeight = heightW;
+	linesWeight = linesW;
+	holesWeight = holesW;
+	bumpinessWeight = bumpinessW;
 }
 

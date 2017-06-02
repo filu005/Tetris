@@ -48,6 +48,8 @@ int main(int argc, char* argv[])
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
+	//glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
 	GLFWwindow* window = glfwCreateWindow((int)(widthInBlocks * blockSize), (int)(heightInBlocks * blockSize), "LearnOpenGL", nullptr, nullptr); // Windowed
 	glfwMakeContextCurrent(window);
 
@@ -69,6 +71,13 @@ int main(int argc, char* argv[])
 	if(argc >= 6)
 		numOfIterations = atoi(argv[5]);
 
+	int maxScore = 0;
+	if(argc >= 7)
+		maxScore = atoi(argv[6]);
+
+	if(argc >= 11)
+		game->setAIModifiers(atof(argv[7]), atof(argv[8]), atof(argv[9]), atof(argv[10]));
+
 	// Define the viewport dimensions
 	glViewport(0, 0, (GLsizei) (widthInBlocks * blockSize), (GLsizei) (heightInBlocks * blockSize));
 
@@ -80,9 +89,10 @@ int main(int argc, char* argv[])
 
 		calcFPS(window, 1.0, "");
 
-		if(secElapse(game->interval))
+		//if(secElapse(game->interval))
 		{
-			game->tick();
+			if(game->tick())
+				break;
 
 			render(window);
 		}
@@ -92,10 +102,13 @@ int main(int argc, char* argv[])
 
 		if((numOfIterations != 0) && (game->iterations >= numOfIterations))
 			glfwSetWindowShouldClose(window, GL_TRUE);
+
+		if((maxScore != 0) && (game->getScore() >= maxScore))
+			glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
 	glfwTerminate();
-	return 0;
+	return game->getScore();
 }
 
 // Is called whenever a key is pressed/released via GLFW

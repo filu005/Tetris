@@ -21,7 +21,7 @@ public:
 		_ofstrm.close();
 	}
 
-	void tick();
+	bool tick();
 	void paint();
 	void keyEvent(Direction);
 	void fillTetrominoPool();
@@ -32,6 +32,8 @@ public:
 	void turnOnLogging();
 	void setLookAheadTetrominosNumbler(int num) { _lookAheadTetrominos = num; }
 	void setTetrominoDrawStyle(int num) { _tetrominoDrawStyle = (num <= 1) ? num : 1; }
+	void setAIModifiers(double heightW, double linesW, double holesW, double bumpinessW) { _ai.setAIModifiers(heightW, linesW, holesW, bumpinessW); }
+	int getScore() const { return _points; }
 
 	int iterations;
 	double interval;
